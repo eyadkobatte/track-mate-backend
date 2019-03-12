@@ -37,7 +37,35 @@ router.post('/list', (req, res) => {
     });
 });
 
-// 12. Delete User
+// 12. Get user from email id
+router.post('/email', (req, res) => {
+  const email = req.body.email;
+  User.findOne({email: email})
+    .then((user) => {
+      console.log(user);
+      res.status(200).json(user);
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500) > json(error);
+    });
+});
+
+// 13. Get photo url from uid
+router.get('/photo/:uid', (req, res) => {
+  const uid = req.params.uid;
+  User.findOne({uid: uid})
+    .then((user) => {
+      console.log(user);
+      res.status(200).json({photoURL: user.photoURL});
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).json(error);
+    });
+});
+
+// 14. Delete User
 router.delete('/:id', (req, res) => {
   res.send('not configured');
 });

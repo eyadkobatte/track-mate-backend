@@ -95,7 +95,7 @@ router.put('/:id', (req, res) => {
     Room.findOneAndUpdate(
       {_id: ObjectId(req.params.id)},
       {
-        $pull: {permissions: ObjectId(req.body._id)}
+        $pull: {permissions: {_id: ObjectId(req.body._id)}}
       },
       {new: true}
     )
@@ -120,7 +120,7 @@ router.put('/:id/item', (req, res) => {
     const newItem = new Item({
       _id: new ObjectId(),
       ...req.body,
-      addedBy: {uid: req.body.addedBy.uid, time: new Date()},
+      addedBy: {uid: req.body.addedBy.uid, time: new Date()}
     });
     Room.findOneAndUpdate(
       {_id: ObjectId(req.params.id)},
