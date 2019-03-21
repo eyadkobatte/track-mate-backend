@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 
 var Room = require('../models/Room').Room;
 var Permission = require('../models/Permission').Permission;
-var Item = require('../models/Item').Item;
+var Note = require('../models/NoteItem').NoteItem;
 
 var ObjectId = mongoose.Types.ObjectId;
 
@@ -113,11 +113,24 @@ router.put('/:id', (req, res) => {
   }
 });
 
-// 7. 8. (Add/Delete Item in Room)
-router.put('/:id/item', (req, res) => {
+// 7. Delete Room
+router.delete('/:id', (req, res) => {
+  Room.findOneAndRemove({_id: ObjectId(req.params.id)})
+    .then((room) => {
+      console.log(room);
+      res.status(200).json(room);
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).json(error);
+    });
+});
+
+// 8. 9. (Add/Delete Item in Room)
+router.put('/:id/note', (req, res) => {
   const operation = req.body.operation;
   if (operation === 'ADD') {
-    const newItem = new Item({
+    const newNote = new Note({
       _id: new ObjectId(),
       ...req.body,
       addedBy: {uid: req.body.addedBy.uid, time: new Date()}
@@ -125,7 +138,7 @@ router.put('/:id/item', (req, res) => {
     Room.findOneAndUpdate(
       {_id: ObjectId(req.params.id)},
       {
-        $push: {items: newItem}
+        $push: {noteItems: newNote}
       },
       {new: true}
     )
@@ -141,7 +154,7 @@ router.put('/:id/item', (req, res) => {
     Room.findOneAndUpdate(
       {_id: ObjectId(req.params.id)},
       {
-        $pull: {items: ObjectId(req.body._id)}
+        $pull: {noteItems: ObjectId(req.body._id)}
       },
       {new: true}
     )
@@ -157,19 +170,6 @@ router.put('/:id/item', (req, res) => {
     console.error('Invalid Operation');
     res.status(500).json({status: 'Invalid Operation'});
   }
-});
-
-// 9. Delete Room
-router.delete('/:id', (req, res) => {
-  Room.findOneAndRemove({_id: ObjectId(req.params.id)})
-    .then((room) => {
-      console.log(room);
-      res.status(200).json(room);
-    })
-    .catch((error) => {
-      console.error(error);
-      res.status(500).json(error);
-    });
 });
 
 module.exports = router;

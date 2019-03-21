@@ -51,13 +51,13 @@ router.post('/email', (req, res) => {
     });
 });
 
-// 13. Get photo url from uid
-router.get('/photo/:uid', (req, res) => {
-  const uid = req.params.uid;
+// 13. Get User from uid
+router.post('/uid', (req, res) => {
+  const uid = req.body.uid;
   User.findOne({uid: uid})
     .then((user) => {
       console.log(user);
-      res.status(200).json({photoURL: user.photoURL});
+      res.status(200).json(user);
     })
     .catch((error) => {
       console.error(error);
