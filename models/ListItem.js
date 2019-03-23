@@ -5,6 +5,7 @@ var ObjectId = mongoose.Schema.Types.ObjectId;
 
 const ListItemSchema = mongoose.Schema({
   _id: ObjectId,
+  listName: String,
   addedBy: {
     uid: String,
     time: Date

@@ -5,6 +5,7 @@ var mongoose = require('mongoose');
 var Room = require('../models/Room').Room;
 var Permission = require('../models/Permission').Permission;
 var Note = require('../models/NoteItem').NoteItem;
+var List = require('../models/ListItem').ListItem;
 
 var ObjectId = mongoose.Types.ObjectId;
 
@@ -126,7 +127,7 @@ router.delete('/:id', (req, res) => {
     });
 });
 
-// 8. 9. (Add/Delete Item in Room)
+// 8. 9. (Add/Delete Note in Room)
 router.put('/:id/note', (req, res) => {
   const operation = req.body.operation;
   if (operation === 'ADD') {
@@ -154,7 +155,53 @@ router.put('/:id/note', (req, res) => {
     Room.findOneAndUpdate(
       {_id: ObjectId(req.params.id)},
       {
-        $pull: {noteItems: ObjectId(req.body._id)}
+        $pull: {noteItems: {_id: ObjectId(req.body._id)}}
+      },
+      {new: true}
+    )
+      .then((room) => {
+        console.log(room);
+        res.status(200).json(room);
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).json(error);
+      });
+  } else {
+    console.error('Invalid Operation');
+    res.status(500).json({status: 'Invalid Operation'});
+  }
+});
+
+// 10. 11. (Add/Delete List in Room)
+router.put('/:id/list', (req, res) => {
+  const operation = req.body.operation;
+  if (operation === 'ADD') {
+    const newList = new List({
+      _id: new ObjectId(),
+      listName: req.body.listName,
+      addedBy: {uid: req.body.addedBy.uid, time: new Date()}
+    });
+    Room.findOneAndUpdate(
+      {_id: ObjectId(req.params.id)},
+      {
+        $push: {listItems: newList}
+      },
+      {new: true}
+    )
+      .then((room) => {
+        console.log(room);
+        res.status(200).json(room);
+      })
+      .catch((error) => {
+        console.log(error);
+        res.status(500).json(error);
+      });
+  } else if (operation === 'REMOVE') {
+    Room.findOneAndUpdate(
+      {_id: ObjectId(req.params.id)},
+      {
+        $pull: {listItems: ObjectId(req.body._id)}
       },
       {new: true}
     )
