@@ -6,6 +6,7 @@ var Room = require('../models/Room').Room;
 var Permission = require('../models/Permission').Permission;
 var Note = require('../models/NoteItem').NoteItem;
 var List = require('../models/ListItem').ListItem;
+var Item = require('../models/Item').Item;
 
 var ObjectId = mongoose.Types.ObjectId;
 
@@ -201,7 +202,7 @@ router.put('/:id/list', (req, res) => {
     Room.findOneAndUpdate(
       {_id: ObjectId(req.params.id)},
       {
-        $pull: {listItems: ObjectId(req.body._id)}
+        $pull: {listItems: {_id: ObjectId(req.body._id)}}
       },
       {new: true}
     )
@@ -216,6 +217,55 @@ router.put('/:id/list', (req, res) => {
   } else {
     console.error('Invalid Operation');
     res.status(500).json({status: 'Invalid Operation'});
+  }
+});
+
+// 11.12. Add/Delete item from a list in a room
+router.put('/:roomId/list/:listId/item', (req, res) => {
+  const operation = req.body.operation;
+  if (operation == 'ADD') {
+    const newItem = new Item({
+      _id: new ObjectId(),
+      itemName: req.body.itemName,
+      addedBy: {uid: req.body.addedBy.uid, time: new Date()}
+    });
+    Room.findOneAndUpdate(
+      {_id: ObjectId(req.params.roomId)},
+      {
+        $push: {'listItems.$[i].items': newItem}
+      },
+      {
+        arrayFilters: [{'i._id': ObjectId(req.params.listId)}],
+        new: true
+      }
+    )
+      .then((room) => {
+        console.log(room);
+        res.status(200).json(room);
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).json(error);
+      });
+  } else if (operation === 'REMOVE') {
+    Room.findOneAndUpdate(
+      {_id: ObjectId(req.params.roomId)},
+      {
+        $pull: {'listItems.$[i].items': {_id: ObjectId(req.body._id)}}
+      },
+      {
+        arrayFilters: [{'i._id': ObjectId(req.params.listId)}],
+        new: true
+      }
+    )
+      .then((room) => {
+        console.log(room);
+        res.status(200).json(room);
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).json(error);
+      });
   }
 });
 
