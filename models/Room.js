@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const NoteItemFile = require('./NoteItem');
 const ListItemFile = require('./ListItem');
-const TableItemFile = require('./TableItem');
+const WalletListFile = require('./WalletItem');
 const PermissionFile = require('./Permission');
 
 var ObjectId = mongoose.Schema.Types.ObjectId;
@@ -17,7 +17,7 @@ const RoomSchema = mongoose.Schema({
   permissions: [PermissionFile.PermissionSchema],
   noteItems: [NoteItemFile.NoteItemSchema],
   listItems: [ListItemFile.ListItemSchema],
-  tableItems: [TableItemFile.TableItemSchema]
+  walletListItems: [WalletListFile.WalletItemSchema]
 });
 
 module.exports = {

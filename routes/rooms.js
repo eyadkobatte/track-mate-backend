@@ -220,7 +220,7 @@ router.put('/:id/list', (req, res) => {
   }
 });
 
-// 11.12. Add/Delete item from a list in a room
+// 12.13. Add/Delete item from a list in a room
 router.put('/:roomId/list/:listId/item', (req, res) => {
   const operation = req.body.operation;
   if (operation == 'ADD') {
@@ -268,5 +268,11 @@ router.put('/:roomId/list/:listId/item', (req, res) => {
       });
   }
 });
+
+// 14.15. Add/Delete Wallet List from room
+router.put('/:roomId/walletList', (req, res) => {
+  
+})
+
 
 module.exports = router;
