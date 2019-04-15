@@ -11,7 +11,18 @@ const ItemSchema = mongoose.Schema({
   enabled: {
     type: Boolean,
     default: true
-  }
+  },
+  bought: {
+    uid: String,
+    time: Date,
+    amount: Number
+  },
+  dues: [
+    {
+      uid: String,
+      amount: Number
+    }
+  ]
 });
 
 module.exports = {
