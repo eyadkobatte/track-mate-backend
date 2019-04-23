@@ -7,7 +7,6 @@ var Permission = require('../models/Permission').Permission;
 var Note = require('../models/NoteItem').NoteItem;
 var List = require('../models/ListItem').ListItem;
 var Item = require('../models/Item').Item;
-
 var ObjectId = mongoose.Types.ObjectId;
 
 // 1. Get All Rooms
@@ -181,7 +180,8 @@ router.put('/:id/list', (req, res) => {
     const newList = new List({
       _id: new ObjectId(),
       listName: req.body.listName,
-      addedBy: {uid: req.body.addedBy.uid, time: new Date()}
+      addedBy: {uid: req.body.addedBy.uid, time: new Date()},
+      ...req.body
     });
     Room.findOneAndUpdate(
       {_id: ObjectId(req.params.id)},
@@ -269,10 +269,30 @@ router.put('/:roomId/list/:listId/item', (req, res) => {
   }
 });
 
-// 14.15. Add/Delete Wallet List from room
-router.put('/:roomId/walletList', (req, res) => {
-  
-})
-
+// 14. add transaction in wallet enabled list
+router.put('/:roomId/list/:listId/item/:itemId/transaction', (req, res) => {
+  Room.findOneAndUpdate(
+    {_id: ObjectId(req.params.roomId)},
+    {
+      'listItems.$[i].items.$[j].bought': req.body.bought,
+      $push: {'listItems.$[i].items.$[j].dues': req.body.dues}
+    },
+    {
+      arrayFilters: [
+        {'i._id': ObjectId(req.params.listId)},
+        {'j._id': ObjectId(req.params.itemId)}
+      ],
+      new: true
+    }
+  )
+    .then((room) => {
+      console.log(room);
+      res.status(200).json(room);
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).json(error);
+    });
+});
 
 module.exports = router;

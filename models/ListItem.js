@@ -6,11 +6,15 @@ var ObjectId = mongoose.Schema.Types.ObjectId;
 const ListItemSchema = mongoose.Schema({
   _id: ObjectId,
   listName: String,
+  isWallet: {
+    type: Boolean,
+    default: false
+  },
   addedBy: {
     uid: String,
     time: Date
   },
-  items: [ItemFile.ItemSchema]
+  items: [ItemFile.ItemSchema],
 });
 
 module.exports = {
