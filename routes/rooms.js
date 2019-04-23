@@ -12,11 +12,11 @@ var ObjectId = mongoose.Types.ObjectId;
 // 1. Get All Rooms
 router.get('/', (req, res) => {
   Room.find()
-    .then(rooms => {
+    .then((rooms) => {
       console.log(rooms);
       res.status(200).json(rooms);
     })
-    .catch(error => {
+    .catch((error) => {
       console.error(error);
       res.status(500).json(error);
     });
@@ -25,13 +25,13 @@ router.get('/', (req, res) => {
 // 2. Get Rooms Based on User UID
 router.get('/u/:uid', (req, res) => {
   Room.find({
-    $or: [{ 'created.uid': req.params.uid }, { 'permissions.uid': req.params.uid }]
+    $or: [{'created.uid': req.params.uid}, {'permissions.uid': req.params.uid}]
   })
-    .then(rooms => {
+    .then((rooms) => {
       console.log(rooms);
       res.status(200).json(rooms);
     })
-    .catch(error => {
+    .catch((error) => {
       console.error(error);
       res.status(500).json(error);
     });
@@ -39,12 +39,12 @@ router.get('/u/:uid', (req, res) => {
 
 // 3. Get Room based on Room id
 router.get('/r/:id', (req, res) => {
-  Room.findOne({ _id: ObjectId(req.params.id) })
-    .then(room => {
+  Room.findOne({_id: ObjectId(req.params.id)})
+    .then((room) => {
       console.log(room);
       res.status(200).json(room);
     })
-    .catch(error => {
+    .catch((error) => {
       console.log(error);
       res.status(500).json(error);
     });
@@ -55,14 +55,14 @@ router.post('', (req, res) => {
   const newRoom = new Room({
     _id: new ObjectId(),
     ...req.body,
-    created: { uid: req.body.created.uid, time: new Date() }
+    created: {uid: req.body.created.uid, time: new Date()}
   });
   Room.create(newRoom)
-    .then(room => {
+    .then((room) => {
       console.log(room);
       res.status(200).json(room);
     })
-    .catch(error => {
+    .catch((error) => {
       console.error(error);
       res.status(500).json(error);
     });
@@ -75,53 +75,53 @@ router.put('/:id', (req, res) => {
     const permission = new Permission({
       _id: new ObjectId(),
       ...req.body,
-      addedBy: { uid: req.body.addedBy.uid, time: new Date() }
+      addedBy: {uid: req.body.addedBy.uid, time: new Date()}
     });
     Room.findOneAndUpdate(
-      { _id: ObjectId(req.params.id) },
+      {_id: ObjectId(req.params.id)},
       {
-        $push: { permissions: permission }
+        $push: {permissions: permission}
       },
-      { new: true }
+      {new: true}
     )
-      .then(room => {
+      .then((room) => {
         console.log(room);
         res.status(200).json(room);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
         res.status(500).json(error);
       });
   } else if (operation === 'REMOVE') {
     Room.findOneAndUpdate(
-      { _id: ObjectId(req.params.id) },
+      {_id: ObjectId(req.params.id)},
       {
-        $pull: { permissions: { _id: ObjectId(req.body._id) } }
+        $pull: {permissions: {_id: ObjectId(req.body._id)}}
       },
-      { new: true }
+      {new: true}
     )
-      .then(room => {
+      .then((room) => {
         console.log(room);
         res.status(200).json(room);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
         res.status(500).json(error);
       });
   } else {
     console.error('Invalid Operation');
-    res.status(500).json({ status: 'Invalid Operation' });
+    res.status(500).json({status: 'Invalid Operation'});
   }
 });
 
 // 7. Delete Room
 router.delete('/:id', (req, res) => {
-  Room.findOneAndRemove({ _id: ObjectId(req.params.id) })
-    .then(room => {
+  Room.findOneAndRemove({_id: ObjectId(req.params.id)})
+    .then((room) => {
       console.log(room);
       res.status(200).json(room);
     })
-    .catch(error => {
+    .catch((error) => {
       console.error(error);
       res.status(500).json(error);
     });
@@ -134,42 +134,42 @@ router.put('/:id/note', (req, res) => {
     const newNote = new Note({
       _id: new ObjectId(),
       ...req.body,
-      addedBy: { uid: req.body.addedBy.uid, time: new Date() }
+      addedBy: {uid: req.body.addedBy.uid, time: new Date()}
     });
     Room.findOneAndUpdate(
-      { _id: ObjectId(req.params.id) },
+      {_id: ObjectId(req.params.id)},
       {
-        $push: { noteItems: newNote }
+        $push: {noteItems: newNote}
       },
-      { new: true }
+      {new: true}
     )
-      .then(room => {
+      .then((room) => {
         console.log(room);
         res.status(200).json(room);
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
         res.status(500).json(error);
       });
   } else if (operation === 'REMOVE') {
     Room.findOneAndUpdate(
-      { _id: ObjectId(req.params.id) },
+      {_id: ObjectId(req.params.id)},
       {
-        $pull: { noteItems: { _id: ObjectId(req.body._id) } }
+        $pull: {noteItems: {_id: ObjectId(req.body._id)}}
       },
-      { new: true }
+      {new: true}
     )
-      .then(room => {
+      .then((room) => {
         console.log(room);
         res.status(200).json(room);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
         res.status(500).json(error);
       });
   } else {
     console.error('Invalid Operation');
-    res.status(500).json({ status: 'Invalid Operation' });
+    res.status(500).json({status: 'Invalid Operation'});
   }
 });
 
@@ -180,43 +180,43 @@ router.put('/:id/list', (req, res) => {
     const newList = new List({
       _id: new ObjectId(),
       listName: req.body.listName,
-      addedBy: { uid: req.body.addedBy.uid, time: new Date() },
+      addedBy: {uid: req.body.addedBy.uid, time: new Date()},
       ...req.body
     });
     Room.findOneAndUpdate(
-      { _id: ObjectId(req.params.id) },
+      {_id: ObjectId(req.params.id)},
       {
-        $push: { listItems: newList }
+        $push: {listItems: newList}
       },
-      { new: true }
+      {new: true}
     )
-      .then(room => {
+      .then((room) => {
         console.log(room);
         res.status(200).json(room);
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
         res.status(500).json(error);
       });
   } else if (operation === 'REMOVE') {
     Room.findOneAndUpdate(
-      { _id: ObjectId(req.params.id) },
+      {_id: ObjectId(req.params.id)},
       {
-        $pull: { listItems: { _id: ObjectId(req.body._id) } }
+        $pull: {listItems: {_id: ObjectId(req.body._id)}}
       },
-      { new: true }
+      {new: true}
     )
-      .then(room => {
+      .then((room) => {
         console.log(room);
         res.status(200).json(room);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
         res.status(500).json(error);
       });
   } else {
     console.error('Invalid Operation');
-    res.status(500).json({ status: 'Invalid Operation' });
+    res.status(500).json({status: 'Invalid Operation'});
   }
 });
 
@@ -227,42 +227,42 @@ router.put('/:roomId/list/:listId/item', (req, res) => {
     const newItem = new Item({
       _id: new ObjectId(),
       itemName: req.body.itemName,
-      addedBy: { uid: req.body.addedBy.uid, time: new Date() }
+      addedBy: {uid: req.body.addedBy.uid, time: new Date()}
     });
     Room.findOneAndUpdate(
-      { _id: ObjectId(req.params.roomId) },
+      {_id: ObjectId(req.params.roomId)},
       {
-        $push: { 'listItems.$[i].items': newItem }
+        $push: {'listItems.$[i].items': newItem}
       },
       {
-        arrayFilters: [{ 'i._id': ObjectId(req.params.listId) }],
+        arrayFilters: [{'i._id': ObjectId(req.params.listId)}],
         new: true
       }
     )
-      .then(room => {
+      .then((room) => {
         console.log(room);
         res.status(200).json(room);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
         res.status(500).json(error);
       });
   } else if (operation === 'REMOVE') {
     Room.findOneAndUpdate(
-      { _id: ObjectId(req.params.roomId) },
+      {_id: ObjectId(req.params.roomId)},
       {
-        $pull: { 'listItems.$[i].items': { _id: ObjectId(req.body._id) } }
+        $pull: {'listItems.$[i].items': {_id: ObjectId(req.body._id)}}
       },
       {
-        arrayFilters: [{ 'i._id': ObjectId(req.params.listId) }],
+        arrayFilters: [{'i._id': ObjectId(req.params.listId)}],
         new: true
       }
     )
-      .then(room => {
+      .then((room) => {
         console.log(room);
         res.status(200).json(room);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
         res.status(500).json(error);
       });
@@ -272,21 +272,24 @@ router.put('/:roomId/list/:listId/item', (req, res) => {
 // 14. add transaction in wallet enabled list
 router.put('/:roomId/list/:listId/item/:itemId/transaction', (req, res) => {
   Room.findOneAndUpdate(
-    { _id: ObjectId(req.params.roomId) },
+    {_id: ObjectId(req.params.roomId)},
     {
       'listItems.$[i].items.$[j].bought': req.body.bought,
-      $push: { 'listItems.$[i].items.$[j].dues': req.body.dues }
+      $push: {'listItems.$[i].items.$[j].dues': req.body.dues}
     },
     {
-      arrayFilters: [{ 'i._id': ObjectId(req.params.listId) }, { 'j._id': ObjectId(req.params.itemId) }],
+      arrayFilters: [
+        {'i._id': ObjectId(req.params.listId)},
+        {'j._id': ObjectId(req.params.itemId)}
+      ],
       new: true
     }
   )
-    .then(room => {
+    .then((room) => {
       console.log(room);
       res.status(200).json(room);
     })
-    .catch(error => {
+    .catch((error) => {
       console.error(error);
       res.status(500).json(error);
     });
